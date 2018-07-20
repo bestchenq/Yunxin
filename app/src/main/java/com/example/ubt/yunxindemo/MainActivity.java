@@ -32,9 +32,7 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btn, btn2;
-
-
+    Button btn, btn2, btn3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
         btn = findViewById(R.id.btn);
         btn2 = findViewById(R.id.btn2);
+        btn3 = findViewById(R.id.btn3);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 AbortableFuture<LoginInfo> loginRequest = NIMClient.getService(AuthService.class).login(loginInfo());
 
                 loginRequest.setCallback(new RequestCallback() {
@@ -61,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailed(int code) {
-
                         Log.d("chenqiang", "log in fail code :" + code);
-
                     }
 
                     @Override
@@ -78,10 +73,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 StatusCode status = NIMClient.getStatus();
-
                 Log.d("chenqiang","status code ===" + status);
+                sendTextMsg();
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 AVChatKit.setContext(MainActivity.this);
-              //  sendTextMsg();
                 AVChatKit.outgoingCall(MainActivity.this, "11111111", "chenq", AVChatType.VIDEO.getValue(), AVChatActivity.FROM_INTERNAL);
             }
         });
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendTextMsg() {
         // 该帐号为示例，请先注册
-        String account = "bestchenq";
+        String account = "11111111";
 // 以单聊类型为例
         SessionTypeEnum sessionType = SessionTypeEnum.P2P;
         String text = "this is an example";
@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
 // 发送给对方
         NIMClient.getService(MsgService.class).sendMessage(textMessage, false);
     }
-
 
     //接收来电
     private void enableAVChat() {
