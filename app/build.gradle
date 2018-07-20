@@ -1,0 +1,83 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.example.ubt.yunxindemo"
+        minSdkVersion 15
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            //设置支持的SO库架构
+            abiFilters "armeabi-v7a", "x86","arm64-v8a","x86_64"
+        }
+    }
+    signingConfigs {
+        debug { storeFile file("debug.keystore") }
+
+        release {
+            storeFile file('release.keystore')
+            storePassword 'thisiskeystorepassword'
+            keyAlias 'nim_demo'
+            keyPassword 'thisiskeypassword'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            manifestPlaceholders = [AMAP_KEY: "4fee3408c32c23f945b7cf9af38bdeb3"]
+            ext.enableCrashlytics = false
+        }
+
+        release {
+            shrinkResources true
+            minifyEnabled true
+            zipAlignEnabled true
+            //proguardFile('proguard.cfg')
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [AMAP_KEY: "4fee3408c32c23f945b7cf9af38bdeb3"]
+            ext.enableCrashlytics = true
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation("com.android.support:appcompat-v7:${V7_APPCOMPAT_VERSION}")
+    implementation("com.android.support:recyclerview-v7:${RECYCLER_VIEW_SUPPORT_VERSION}")
+    implementation("com.android.support:design:${DESIGIN_SUPPORT_VERSION}")
+    implementation("com.android.support.constraint:constraint-layout:${CONSTRAIT_SUPPORT_VERSION}")
+
+
+   // implementation 'com.android.support:appcompat-v7:27.1.1'
+    //implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //compile fileTree(dir: 'libs', include: '*.jar')
+    // 添加依赖。注意，版本号必须一致。
+    // 基础功能 (必需)
+    compile 'com.netease.nimlib:basesdk:5.4.0'
+    // 音视频和互动白板服务需要
+    compile 'com.netease.nimlib:nrtc:5.4.0'
+    // 音视频需要
+    compile 'com.netease.nimlib:avchat:5.4.0'
+    // 聊天室需要
+    compile 'com.netease.nimlib:chatroom:5.4.0'
+    // 互动白板服务需要
+    compile 'com.netease.nimlib:rts:5.4.0'
+    // 全文检索服务需要
+    compile 'com.netease.nimlib:lucene:5.4.0'
+    // 小米、华为、魅族、fcm 推送
+    compile 'com.netease.nimlib:push:5.4.0'
+    compile project(path: ':avchatkit')
+  //  compile 'com.android.support:support-v4:27.1.1'
+
+    compile 'com.android.support:multidex:1.0.3'
+}
