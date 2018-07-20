@@ -3,6 +3,7 @@ package com.example.ubt.yunxindemo;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -139,13 +140,14 @@ public class MyApplication extends Application {
         return options;
     }
 
-
-
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
-    private LoginInfo loginInfo() {
+    public static LoginInfo loginInfo() {
         //985495e7ff0d56b847016dd2de2ee1df      ////22222222 DE
         //9612967701cd48482600ca970fb8d5a5      ////11111111 DE
-        return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
+        if (Build.MODEL.contains("SHV")) {
+            return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
+        }
+        return new LoginInfo("22222222", "985495e7ff0d56b847016dd2de2ee1df");
     }
 
 

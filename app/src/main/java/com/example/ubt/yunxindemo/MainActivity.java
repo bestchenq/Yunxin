@@ -1,5 +1,6 @@
 package com.example.ubt.yunxindemo;
 
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -41,12 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
     TextView msgText;
 
+    String account = "11111111";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         enableAVChat();
+        setTargetAccount();
 
         btn = findViewById(R.id.btn);
         btn2 = findViewById(R.id.btn2);
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AbortableFuture<LoginInfo> loginRequest = NIMClient.getService(AuthService.class).login(loginInfo());
+                AbortableFuture<LoginInfo> loginRequest = NIMClient.getService(AuthService.class).login(MyApplication.loginInfo());
 
                 loginRequest.setCallback(new RequestCallback() {
                     @Override
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 StatusCode status = NIMClient.getStatus();
-                Log.d("chenqiang","status code ===" + status);
+                Log.d("chenqiang", "status code ===" + status);
                 sendTextMsg();
             }
         });
@@ -92,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AVChatKit.setContext(MainActivity.this);
-                AVChatKit.outgoingCall(MainActivity.this, "11111111", "chenq", AVChatType.VIDEO.getValue(), AVChatActivity.FROM_INTERNAL);
+                AVChatKit.outgoingCall(MainActivity.this, account, "chenq", AVChatType.VIDEO.getValue(), AVChatActivity.FROM_INTERNAL);
             }
         });
 
@@ -100,11 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
-    private LoginInfo loginInfo() {
-        //985495e7ff0d56b847016dd2de2ee1df      ////22222222 DE
-        //9612967701cd48482600ca970fb8d5a5      ////11111111 DE
-        return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
-    }
+//    private LoginInfo loginInfo() {
+//        //985495e7ff0d56b847016dd2de2ee1df      ////22222222 DE
+//        //9612967701cd48482600ca970fb8d5a5      ////11111111 DE
+//        return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
+//    }
 
 
     @Override
@@ -114,9 +118,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void sendTextMsg() {
+    private void setTargetAccount() {
         // 该帐号为示例，请先注册
-        String account = "11111111";
+
+        if (Build.MODEL.contains("SHV")) {
+            account = "22222222";
+        } else {
+            account = "11111111";
+        }
+    }
+
+    private void sendTextMsg() {
+
 // 以单聊类型为例
         SessionTypeEnum sessionType = SessionTypeEnum.P2P;
         String text = "this is an example";
@@ -141,13 +154,13 @@ public class MainActivity extends AppCompatActivity {
                 if (PhoneCallStateObserver.getInstance().getPhoneCallState() != PhoneCallStateObserver.PhoneCallStateEnum.IDLE
                         || AVChatProfile.getInstance().isAVChatting()
                         || AVChatManager.getInstance().getCurrentChatId() != 0) {
-                  //  LogUtil.i(TAG, "reject incoming call data =" + data.toString() + " as local phone is not idle");
+                    //  LogUtil.i(TAG, "reject incoming call data =" + data.toString() + " as local phone is not idle");
                     AVChatManager.getInstance().sendControlCommand(data.getChatId(), AVChatControlCommand.BUSY, null);
                     return;
                 }
                 // 有网络来电打开AVChatActivity
                 AVChatProfile.getInstance().setAVChatting(true);
-               // AVChatActivity.launch(DemoCache.getContext(), data, AVChatActivity.FROM_BROADCASTRECEIVER);
+                // AVChatActivity.launch(DemoCache.getContext(), data, AVChatActivity.FROM_BROADCASTRECEIVER);
             }
         }, register);
     }
@@ -159,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(List<IMMessage> messages) {
                         // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
-                        Log.d("chenqiang", "messages num is " +messages.size());
+                        Log.d("chenqiang", "messages num is " + messages.size());
 
-                        for(IMMessage message : messages) {
+                        for (IMMessage message : messages) {
                             Log.d("chenqiang", "msg is " + message.getContent());
                             msgText.setText(msgText.getText().toString() + "\n" + message.getContent());
                         }
