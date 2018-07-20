@@ -145,7 +145,7 @@ public class MyApplication extends Application {
     private LoginInfo loginInfo() {
         //985495e7ff0d56b847016dd2de2ee1df      ////22222222 DE
         //9612967701cd48482600ca970fb8d5a5      ////11111111 DE
-        return new LoginInfo("22222222", "985495e7ff0d56b847016dd2de2ee1df");
+        return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
     }
 
 

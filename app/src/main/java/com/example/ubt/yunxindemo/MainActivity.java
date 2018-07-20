@@ -2,9 +2,11 @@ package com.example.ubt.yunxindemo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.netease.nim.avchatkit.AVChatKit;
 import com.netease.nim.avchatkit.AVChatProfile;
@@ -27,12 +29,17 @@ import com.netease.nimlib.sdk.avchat.model.AVChatNotifyOption;
 import com.netease.nimlib.sdk.avchat.model.AVChatVideoCapturerFactory;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     Button btn, btn2, btn3;
+
+    TextView msgText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.btn);
         btn2 = findViewById(R.id.btn2);
         btn3 = findViewById(R.id.btn3);
+
+        msgText = findViewById(R.id.msg_text);
+        msgText.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,13 +103,14 @@ public class MainActivity extends AppCompatActivity {
     private LoginInfo loginInfo() {
         //985495e7ff0d56b847016dd2de2ee1df      ////22222222 DE
         //9612967701cd48482600ca970fb8d5a5      ////11111111 DE
-        return new LoginInfo("22222222", "985495e7ff0d56b847016dd2de2ee1df");
+        return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
+        registerMsgReceiver();
 
     }
 
@@ -139,5 +150,24 @@ public class MainActivity extends AppCompatActivity {
                // AVChatActivity.launch(DemoCache.getContext(), data, AVChatActivity.FROM_BROADCASTRECEIVER);
             }
         }, register);
+    }
+
+
+    private void registerMsgReceiver() {
+        Observer<List<IMMessage>> incomingMessageObserver =
+                new Observer<List<IMMessage>>() {
+                    @Override
+                    public void onEvent(List<IMMessage> messages) {
+                        // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
+                        Log.d("chenqiang", "messages num is " +messages.size());
+
+                        for(IMMessage message : messages) {
+                            Log.d("chenqiang", "msg is " + message.getContent());
+                            msgText.setText(msgText.getText().toString() + "\n" + message.getContent());
+                        }
+                    }
+                };
+        NIMClient.getService(MsgServiceObserve.class)
+                .observeReceiveMessage(incomingMessageObserver, true);
     }
 }
