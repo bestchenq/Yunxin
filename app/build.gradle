@@ -80,4 +80,6 @@ dependencies {
   //  compile 'com.android.support:support-v4:27.1.1'
 
     compile 'com.android.support:multidex:1.0.3'
+    compile project(path: ':uikit')
+    compile project(path: ':uikit')
 }

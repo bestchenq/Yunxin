@@ -10,6 +10,11 @@ import com.netease.nim.avchatkit.AVChatKit;
 import com.netease.nim.avchatkit.config.AVChatOptions;
 import com.netease.nim.avchatkit.model.ITeamDataProvider;
 import com.netease.nim.avchatkit.model.IUserInfoProvider;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.UIKitOptions;
+import com.netease.nim.uikit.business.contact.core.util.ContactHelper;
+import com.netease.nim.uikit.business.team.helper.TeamHelper;
+import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
@@ -29,10 +34,39 @@ public class MyApplication extends Application {
         MultiDex.install(this);
         // 以下逻辑只在主进程初始化时执行
         if (NIMUtil.isMainProcess(this)) {
-
+            initUIKit();
             initAVChatKit();
         }
     }
+
+    private UIKitOptions buildUIKitOptions() {
+        UIKitOptions options = new UIKitOptions();
+        // 设置app图片/音频/日志等缓存目录
+       // options.appCacheDir = NimSDKOptionConfig.getAppCacheDir(this) + "/app";
+        return options;
+    }
+    private void initUIKit() {
+        // 初始化
+        NimUIKit.init(this, buildUIKitOptions());
+
+//        // 设置地理位置提供者。如果需要发送地理位置消息，该参数必须提供。如果不需要，可以忽略。
+//        NimUIKit.setLocationProvider(new NimDemoLocationProvider());
+//
+//        // IM 会话窗口的定制初始化。
+//        SessionHelper.init();
+//
+//        // 聊天室聊天窗口的定制初始化。
+//        ChatRoomSessionHelper.init();
+//
+//        // 通讯录列表定制初始化
+//        ContactHelper.init();
+//
+//        // 添加自定义推送文案以及选项，请开发者在各端（Android、IOS、PC、Web）消息发送时保持一致，以免出现通知不一致的情况
+//        NimUIKit.setCustomPushContentProvider(new DemoPushContentProvider());
+//
+//        NimUIKit.setOnlineStateContentProvider(new DemoOnlineStateContentProvider());
+    }
+
 
     private void initAVChatKit() {
         AVChatOptions avChatOptions = new AVChatOptions(){
@@ -45,7 +79,30 @@ public class MyApplication extends Application {
         avChatOptions.notificationIconRes = R.drawable.ic_launcher_foreground;
         AVChatKit.init(avChatOptions);
 
-        // 初始化日志系
+        // 设置用户相关资料提供者
+        AVChatKit.setUserInfoProvider(new IUserInfoProvider() {
+            @Override
+            public UserInfo getUserInfo(String account) {
+                return NimUIKit.getUserInfoProvider().getUserInfo(account);
+            }
+
+            @Override
+            public String getUserDisplayName(String account) {
+                return UserInfoHelper.getUserDisplayName(account);
+            }
+        });
+        // 设置群组数据提供者
+        AVChatKit.setTeamDataProvider(new ITeamDataProvider() {
+            @Override
+            public String getDisplayNameWithoutMe(String teamId, String account) {
+                return TeamHelper.getDisplayNameWithoutMe(teamId, account);
+            }
+
+            @Override
+            public String getTeamMemberDisplayName(String teamId, String account) {
+                return TeamHelper.getTeamMemberDisplayName(teamId, account);
+            }
+        });
     }
 
 

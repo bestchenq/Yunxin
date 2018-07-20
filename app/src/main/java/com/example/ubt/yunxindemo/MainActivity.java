@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 StatusCode status = NIMClient.getStatus();
 
                 Log.d("chenqiang","status code ===" + status);
+                AVChatKit.setContext(MainActivity.this);
               //  sendTextMsg();
                 AVChatKit.outgoingCall(MainActivity.this, "11111111", "chenq", AVChatType.VIDEO.getValue(), AVChatActivity.FROM_INTERNAL);
             }
