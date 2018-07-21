@@ -103,24 +103,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
-//    private LoginInfo loginInfo() {
-//        //985495e7ff0d56b847016dd2de2ee1df      ////22222222 DE
-//        //9612967701cd48482600ca970fb8d5a5      ////11111111 DE
-//        return new LoginInfo("11111111", "9612967701cd48482600ca970fb8d5a5");
-//    }
-
-
     @Override
     protected void onStart() {
         super.onStart();
         registerMsgReceiver();
-
     }
 
     private void setTargetAccount() {
         // 该帐号为示例，请先注册
-
         if (Build.MODEL.contains("SHV")) {
             account = "22222222";
         } else {
